@@ -1,3 +1,51 @@
 Adam Forestier
 April 2023
 
+API = Application Program Interface
+
+API - Methods of Communication between software components
+    - fundamental building blocks that make it easier to build a computer program
+
+GUI Simplifies using programs 
+API Simplifies making programs
+
+API High Level Examples:
+    - run a process or routine
+    - use hardware
+    - use third party assets
+    - work with exertnal data
+    - send messages
+    - update internal data
+
+API Specific Examples:
+    - Django: using built-in class based views
+    - Mailchimp: updating a customer's email 
+    - Stripe: running a transaction
+    - iOS; share your location
+    - Android: taking in-app picture
+    - Mac: Using siri 
+    - Windows: using Cortana
+
+REST API = Representational State Transfer Application Programming Interface
+    - Web based version of API
+    - Methods to access, process & handle web resources
+    - Modern data type is JSON
+
+URI = Uniform Resource Identifier
+    - Where does the resource exist
+    - Link to given web resource
+    - URIs can be referred to the URLs and API endpoints
+
+HTTP = Hypertext Transfer Protocol
+    - 4 Common Methods
+        - POST (create)
+        - PUT (update)
+        - GET (retreive)
+        - DELETE (delete)
+
+CRUD 
+    4 Common Methods 
+        - Create
+        - Update 
+        - Retrieve
+        - Delete
