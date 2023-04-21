@@ -19,7 +19,11 @@ from django.contrib import admin
 from updates.views import (
     json_example_view,
     JsonCBV,
-    JsonCVB2
+    JsonCVB2,
+    SerializeDetailViewEx,
+    SerializeListViewEx,
+    SerializeDetailViewClean,
+    SerializeListViewClean
 )
 
 urlpatterns = [
@@ -27,4 +31,8 @@ urlpatterns = [
     url(r'^json/example0', json_example_view),
     url(r'^json/example1', JsonCBV.as_view()),
     url(r'^json/example2', JsonCVB2.as_view()),
+    url(r'^json/serialize1', SerializeDetailViewEx.as_view()),
+    url(r'^json/serialize2', SerializeListViewEx.as_view()),
+    url(r'^json/serialize3', SerializeDetailViewClean.as_view()),
+    url(r'^json/serialize4', SerializeListViewClean.as_view()),
 ]
