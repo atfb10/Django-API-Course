@@ -1,3 +1,9 @@
+'''
+author: Adam Forestier
+last updated: april 22, 2023
+IMPORTANT NOTE: This views page is just used as example, building up to cleanest implementation. API views should be in own foldre titled "api" within the app and that folder should contain an __init__.py and views.py -> where api views are housed
+'''
+
 import json
 
 from django.core.serializers import serialize
