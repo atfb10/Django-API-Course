@@ -19,12 +19,13 @@ from .views import (
     UpdateModelDetailAPIView,
     UpdateModelListAPIView,
     UpdateModelCreateAPIView,
+    UpdateModelAPIEndpoint
 )
 
 urlpatterns = [
-    url(r'^$', UpdateModelListAPIView.as_view()), # List
+    # url(r'^$', UpdateModelListAPIView.as_view()), # List
+    url(r'^$', UpdateModelAPIEndpoint.as_view()),
     url(r'^(?P<id>\d+)/$', UpdateModelDetailAPIView.as_view()), # detail view, delete, update view
     url(r'^/create/', UpdateModelCreateAPIView.as_view()), # detail view, delete, update view
     # url(r'^json/serialize4', SerializeListViewClean.as_view()),
-
 ]
