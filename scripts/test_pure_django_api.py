@@ -6,7 +6,7 @@ description: test pure django api using requests library
 Python by default treats data as a string
 .json() from 
 '''
-
+import json
 import requests
 
 BASE_URL = "http://127.0.0.1:8000/"
@@ -33,7 +33,27 @@ def create_update():
         'user': 1,
         'content': 'Another update' 
     }
-    r = requests.post(BASE_URL+ENDPOINT, data=new_data)
+    r = requests.post(BASE_URL+ENDPOINT, data=json.dumps(new_data))
+    print(r.status_code)
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    return r.text
+
+def do_obj_update():
+    new_data = {
+        'content': 'Another update' 
+    }
+    r = requests.put(BASE_URL+ENDPOINT+'1/', data=json.dumps(new_data))
+    print(r.status_code)
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    return r.text
+
+def do_obj_delete():
+    new_data = {
+        'content': 'Another update' 
+    }
+    r = requests.delete(BASE_URL+ENDPOINT+'1/', data=json.dumps(new_data))
     print(r.status_code)
     if r.status_code == requests.codes.ok:
         return r.json()
