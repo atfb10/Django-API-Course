@@ -2,12 +2,13 @@
 adam forestier
 april 22, 2023
 '''
-
+import json
 from django.views.generic import View
 from django.http import HttpResponse
 
 from django_api.mixins import HttpResponseMixin
 from updates.models import Update
+from updates.forms import UpdateModelForm
 
 # Update, Delete, Retrive (CRUD) -- Perform Crud for single object of Update model
 class UpdateModelDetailAPIView(View, HttpResponseMixin):
@@ -42,12 +43,12 @@ class UpdateModelListAPIView(View, HttpResponseMixin):
         self.render_to_response(json_data)
 
     def post(self, request, *args, **kwargs):
-        data = {"message": "you cannot create an entire list"}
+        data = json.dumps({"message": "you cannot create an entire list. Please the /api/updates/create/ api endpoint"})
         my_status = 400 # bad request
         self.render_to_response(data, my_status)
 
     def delete(self, request, *args, **kwargs):
-        data = {"message": "you cannot delete all data!"}
+        data = json.dumps({"message": "you cannot delete all data!"})
         my_status = 403 # status saying not allowed - forbidden status
         return self.render_to_response(data, my_status)
 
@@ -56,6 +57,15 @@ class UpdateModelCreateAPIView(View):
     create view
     '''
     def post(self, request, *args, **kwargs):
-        json_data = {}
-        my_status = 201 # 201 is a status code that indicates creation
-        return HttpResponse(json_data, content_type='application/json')
+        form = UpdateModelForm(request.POST)
+        create_status = 201 # 201 is a status code that indicates creation
+        error_status = 400
+        if form.is_valid():
+            obj = form.save(commit=True)
+            obj = obj.serialize()
+            return self.render_to_response(obj, create_status)
+        elif form.errors:
+            data = json.dumps(form.errors)
+            return self.render_to_response(data, error_status)
+        data = {'message': 'error occurred'}
+        return self.render_to_response(data, error_status)
