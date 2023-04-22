@@ -75,9 +75,12 @@ class UpdateModelDetailAPIView(View, HttpResponseMixin):
             self.render_to_response(error_data, status=404)
 
         deleted = obj.delete()
-        json_data = json.dumps({'message': 'successfully deleted'})
-        return self.render_to_response(json_data)
+        if deleted:
+            json_data = json.dumps({'message': 'successfully deleted'})
+            return self.render_to_response(json_data)
 
+        error_data = json.dumps({'Error Message': 'Could not delete'})
+        self.render_to_response(error_data, status=400)
 class UpdateModelListAPIView(View, HttpResponseMixin):
     '''
     list view
