@@ -49,3 +49,5 @@ CRUD
         - Update 
         - Retrieve
         - Delete
+
+Serialization - turning data from one structure to another
