@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.core.serializers import serialize
 from django.db import models
@@ -7,8 +9,9 @@ def upload_update_image(instance, filename):
 
 class UpdateQuerySet(models.QuerySet):
     def serialize(self):
-        qs = self
-        return serialize('json', qs, fields=('user', 'content', 'image'))
+        list_values = list(self.values('user', 'content', 'image'))
+        print(list_values)
+        return json.dumps(list_values) 
     
 class UpdateManager(models.Manager):
     def get_queryset(self):
@@ -33,4 +36,12 @@ class Update(models.Model):
         '''
         create a serializer as method of class
         '''
-        return serialize(format='json', queryset=[self], fields=('user', 'content', 'image'))
+        image = 'no image'
+        if self.image:
+            image = self.image
+        data = {
+            'content': self.content,
+            'user': self.user.id,
+            'image': image
+        }
+        return json.dumps(data)
