@@ -51,3 +51,6 @@ CRUD
         - Delete
 
 Serialization - turning data from one structure to another
+
+Django REST Framework
+    * Developed serializers to be implemented similarly to implementing a django form
