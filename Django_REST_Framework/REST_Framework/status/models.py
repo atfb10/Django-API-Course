@@ -25,6 +25,16 @@ class Status(models.Model):
 
     def __repr__(self) -> str:
         '''
+        repr method will return user + first 50 characters of their content
+        '''
+        return f'{self.content[:50]}'
+    
+    def __str__(self) -> str:
+        '''
         str method will return user + first 50 characters of their content
         '''
-        return f'{self.user}: {self.content[:50]}'
+        return f'{self.content[:50]}...'
+    
+    class Meta:
+        verbose_name = 'Status Post'
+        verbose_name_plural = 'Status Posts'
