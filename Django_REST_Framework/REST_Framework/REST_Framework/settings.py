@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # local
-    'status'
+    'status',
 ]
 
 MIDDLEWARE = [
