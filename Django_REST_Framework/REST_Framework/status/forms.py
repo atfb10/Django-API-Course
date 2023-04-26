@@ -7,6 +7,10 @@ class StatusForm(forms.ModelForm):
         model = Status
         fields = ['user', 'content', 'image']
 
+    '''
+    NOTE: TO SELF: will do all cleaning automatically if you just name methods clean_<fieldname>!
+    '''
+
     def clean(self, *args, **kwargs):
         '''
         call cleaning functions
