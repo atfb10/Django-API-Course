@@ -2,7 +2,7 @@
 Adam Forestier
 April 26, 2023
 '''
-from rest_framework import generics # Generics are unbelievably good
+from rest_framework import generics, mixins # Generics are unbelievably good
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -40,7 +40,7 @@ class StatusCreateAPIView(generics.CreateAPIView):
         serializer.save(user=self.request.user)
 
 # Detail
-class StatusDetailAPIView(generics.RetrieveAPIView):
+class StatusOnlyDetailAPIView(generics.RetrieveAPIView):
     # Unbelievably easy!
     permission_classes = []
     authentication_classes = []
@@ -74,8 +74,8 @@ class StatusDeleteAPIView(generics.DestroyAPIView):
 
 
 
-# One to rule them all
-class StatusAPIView(generics.ListAPIView):
+# One to rule create and list
+class StatusAPIView(generics.ListAPIView, mixins.CreateModelMixin):
 
     # Assigment
     permission_classes = []
@@ -94,3 +94,38 @@ class StatusAPIView(generics.ListAPIView):
             qs = qs.filter(content__icontains=q)
         return qs
     
+    # Create
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+# One to rule detail, delete, update
+class StatusDetailAPIView(generics.RetrieveAPIView, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+    # Detail
+    permission_classes = []
+    authentication_classes = []
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
+
+    # update
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def patch(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    # Delete
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+    
+# NOTE: UNLIMITED POWER!!!!!!!!!!!! # NOTE: Ultimate endpoints with extreme ease
+class UltimateStatusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = []
+    authentication_class = []
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
+
+class UltimateStatusAPIView(generics.ListCreateAPIView):
+    permission_classes = []
+    authentication_class = []
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
