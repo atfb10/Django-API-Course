@@ -2,6 +2,7 @@
 Adam Forestier
 April 26, 2023
 '''
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, mixins # Generics are unbelievably good
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -129,3 +130,55 @@ class UltimateStatusAPIView(generics.ListCreateAPIView):
     authentication_class = []
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
+
+class OneEndpointAPIView(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.ListAPIView):
+    permission_classes = []
+    authentication_class = []
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
+
+    def get_queryset(self):
+        # List view. Allow for querying w/ q
+        qs = Status.objects.all()
+        query = self.request.GET.get('q')
+        if query is not None:
+            qs = qs.filter(content__icontains=query)
+        return qs
+    
+    def get_object(self):
+        '''
+        get object by id if it exists. get specific id by: status/?=<id>
+        '''
+        request = self.request
+        passed_id = request.GET.get('id', None)
+        qs = self.get_queryset()
+        obj = None
+        if passed_id:
+            obj = get_object_or_404(qs, id=passed_id)
+            self.check_object_permissions(request, obj) # check object permissions is built in method for Retrieve mixin class
+        return obj
+    
+    def get(self, request, *args, **kwargs):
+        '''
+        override default get. get specific id by: status/?id=<id>
+        '''
+        passed_id = request.GET.get('id', None)
+        if passed_id is not None:
+            return self.retrieve(request, *args, **kwargs) # retrieve is built in method for Retrieve mixin class
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        # Create
+        return self.create(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        # update
+        return self.update(request, *args, **kwargs)
+    
+    def patch(self, request, *args, **kwargs):
+        # update
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        # delete
+        return self.destroy(request, *args, **kwargs)

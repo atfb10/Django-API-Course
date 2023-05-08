@@ -19,7 +19,8 @@ from .views import (
     StatusAPIView,
     StatusDetailAPIView,
     UltimateStatusDetailAPIView,
-    UltimateStatusAPIView
+    UltimateStatusAPIView,
+    OneEndpointAPIView
 )
 
 urlpatterns = [
@@ -31,5 +32,6 @@ urlpatterns = [
     # path('<int:pk>', StatusDetailAPIView.as_view()), # NOTE: ULTIMATE DETAIL ENDPOINT: -> Detail, Update, Delete (with mixins)
     path('<int:pk>', UltimateStatusDetailAPIView.as_view()), # NOTE: ULTIMATE DETAIL ENDPOINT: -> Detail, Update, Delete (with incredible built in class)
     # path('', StatusAPIView.as_view()) # NOTE: ULTIMATE LIST ENDPOINT! -> List & Create (with mixins)
-    path('', UltimateStatusAPIView.as_view()) # NOTE: ULTIMATE LIST ENDPOINT! -> List & Create (with incredible built in class)
+    path('', UltimateStatusAPIView.as_view()), # NOTE: ULTIMATE LIST ENDPOINT! -> List & Create (with incredible built in class)
+    path('endpoint/', OneEndpointAPIView.as_view()) # NOTE: One endpoint that handles absolutely everything!
 ]
