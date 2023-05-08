@@ -3,12 +3,21 @@ Adam Forestier
 April 26, 2023
 '''
 from django.shortcuts import get_object_or_404
+import json
 from rest_framework import generics, mixins # Generics are unbelievably good
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .serializers import StatusSerializer
 from status.models import Status
+
+def is_json(data) -> bool:
+    try:
+        js = json.loads(data)
+        is_valid = True
+    except ValueError:
+        is_valid = False
+    return is_valid
 
 # List
 class StatusListSearchAPIView(APIView):
@@ -136,6 +145,7 @@ class OneEndpointAPIView(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mix
     authentication_class = []
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
+    passed_id = None
 
     def get_queryset(self):
         # List view. Allow for querying w/ q
@@ -150,7 +160,7 @@ class OneEndpointAPIView(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mix
         get object by id if it exists. get specific id by: status/?=<id>
         '''
         request = self.request
-        passed_id = request.GET.get('id', None)
+        passed_id = request.GET.get('id', None) or self.passed_id
         qs = self.get_queryset()
         obj = None
         if passed_id:
@@ -158,11 +168,25 @@ class OneEndpointAPIView(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mix
             self.check_object_permissions(request, obj) # check object permissions is built in method for Retrieve mixin class
         return obj
     
+    def perform_destroy(self, instance):
+        if instance is not None:
+            return instance.delete()
+        return None
+
     def get(self, request, *args, **kwargs):
         '''
         override default get. get specific id by: status/?id=<id>
         '''
-        passed_id = request.GET.get('id', None)
+        url_passed_id = request.GET.get('id', None)
+        json_data = {}
+        body = request.body
+        
+        if is_json(body):
+            json_data = json.loads(request.body)
+        
+        new_passed_id = json_data.get('id', None)
+        passed_id = url_passed_id or new_passed_id or None
+        self.passed_id = passed_id
         if passed_id is not None:
             return self.retrieve(request, *args, **kwargs) # retrieve is built in method for Retrieve mixin class
         return super().get(request, *args, **kwargs)
@@ -172,13 +196,43 @@ class OneEndpointAPIView(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mix
         return self.create(request, *args, **kwargs)
     
     def put(self, request, *args, **kwargs):
+        url_passed_id = request.GET.get('id', None)
+        json_data = {}
+        body = request.body
+        
+        if is_json(body):
+            json_data = json.loads(request.body)
+        
+        new_passed_id = json_data.get('id', None)
+        passed_id = url_passed_id or new_passed_id or None
+        self.passed_id = passed_id
         # update
         return self.update(request, *args, **kwargs)
     
     def patch(self, request, *args, **kwargs):
+        url_passed_id = request.GET.get('id', None)
+        json_data = {}
+        body = request.body
+        
+        if is_json(body):
+            json_data = json.loads(request.body)
+        
+        new_passed_id = json_data.get('id', None)
+        passed_id = url_passed_id or new_passed_id or None
+        self.passed_id = passed_id
         # update
         return self.update(request, *args, **kwargs)
     
     def delete(self, request, *args, **kwargs):
         # delete
+        url_passed_id = request.GET.get('id', None)
+        json_data = {}
+        body = request.body
+        
+        if is_json(body):
+            json_data = json.loads(request.body)
+        
+        new_passed_id = json_data.get('id', None)
+        passed_id = url_passed_id or new_passed_id or None
+        self.passed_id = passed_id
         return self.destroy(request, *args, **kwargs)
