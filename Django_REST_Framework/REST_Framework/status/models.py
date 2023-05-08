@@ -21,7 +21,7 @@ class Status(models.Model):
     image = models.ImageField(upload_to=upload_status_image, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)
-    objects = StatusManager()
+    objects = StatusManager().get_queryset()
 
     def __repr__(self) -> str:
         '''
