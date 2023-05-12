@@ -18,7 +18,7 @@ class StatusManager(models.Manager):
 class Status(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     content = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to=upload_status_image, null=True, blank=True)
+    image = models.ImageField(upload_to=upload_status_image, null=True, blank=True) # Django Storages 3rd 
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)
     objects = StatusManager().get_queryset()
