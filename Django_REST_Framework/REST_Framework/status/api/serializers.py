@@ -18,7 +18,9 @@ class StatusSerializer(serializers.ModelSerializer):
             'content',
             'image'
         ]
-
+        read_only_fields = [
+            'user'
+        ]
     '''
     field level validation
     NOTE: just need to name validate_<fieldname>
