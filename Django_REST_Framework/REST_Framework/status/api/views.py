@@ -4,7 +4,8 @@ April 26, 2023
 '''
 from django.shortcuts import get_object_or_404
 import json
-from rest_framework import generics, mixins # Generics are unbelievably good
+from rest_framework.authentication import SessionAuthentication
+from rest_framework import (generics, mixins, permissions) # Generics are unbelievably good
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -88,8 +89,8 @@ class StatusDeleteAPIView(generics.DestroyAPIView):
 class StatusAPIView(generics.ListAPIView, mixins.CreateModelMixin):
 
     # Assigment
-    permission_classes = []
-    authentication_classes = []
+    # permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = [SessionAuthentication] # NOTE: Commented out to show that the default auth & permissions are working due to what is in main.py and important * from main.py in settings.py!
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
 
@@ -107,12 +108,16 @@ class StatusAPIView(generics.ListAPIView, mixins.CreateModelMixin):
     # Create
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+    
+    # Create
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
 
 # One to rule detail, delete, update
 class StatusDetailAPIView(generics.RetrieveAPIView, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     # Detail
-    permission_classes = []
-    authentication_classes = []
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication]
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
 
@@ -129,17 +134,25 @@ class StatusDetailAPIView(generics.RetrieveAPIView, mixins.UpdateModelMixin, mix
     
 # NOTE: UNLIMITED POWER!!!!!!!!!!!! # NOTE: Ultimate endpoints with extreme ease
 class UltimateStatusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = []
-    authentication_class = []
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_class = [SessionAuthentication]
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
 
 class UltimateStatusAPIView(generics.ListCreateAPIView):
-    permission_classes = []
-    authentication_class = []
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_class = [SessionAuthentication]
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
 
+    # Create
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+
+
+'''
+one endpoint to do all. NOTE: Not best in practice. Gets overally complex. Do 2, 1 detail (update, detail, delete), 1 list (list, create)
+'''
 class OneEndpointAPIView(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.ListAPIView):
     permission_classes = []
     authentication_class = []
