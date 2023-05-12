@@ -89,8 +89,8 @@ class StatusDeleteAPIView(generics.DestroyAPIView):
 class StatusAPIView(generics.ListAPIView, mixins.CreateModelMixin):
 
     # Assigment
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [SessionAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = [SessionAuthentication] # NOTE: Commented out to show that the default auth & permissions are working due to what is in main.py and important * from main.py in settings.py!
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
 
