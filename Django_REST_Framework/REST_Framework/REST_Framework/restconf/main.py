@@ -2,6 +2,7 @@
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
     # 'rest_framework.authentication.BasicAuthentication',
+    'rest_framwork_jwt.authentication.JSONWebTokenAuthentication',
     'rest_framework.authentication.SessionAuthentication'
     ),
     'DEFAULT_PERMISSION_CLASSES': (
