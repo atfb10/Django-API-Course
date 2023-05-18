@@ -7,6 +7,23 @@ class CustomerSerializer(serializers.Serializer):
     content = serializers.CharField()
     email = serializers.EmailField()
     
+
+class StatusInlineUserSerializer(serializers.ModelSerializer):
+    '''
+    turn data into JSON and validate data
+    '''
+    uri = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = Status
+        fields = [
+            'uri',
+            'id',
+            'content',
+            'image'
+        ]
+
+    def get_uri(self, obj):
+        return f'/api/users/{obj.id}'
 class StatusSerializer(serializers.ModelSerializer):
     '''
     turn data into JSON and validate data

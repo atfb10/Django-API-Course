@@ -6,6 +6,8 @@ from rest_framework import generics, permissions
 
 from .serializers import UserRegisterSerializer
 from ..api.user.serlializers import UserDetailSerializer
+from status.api.serializers import StatusInlineUserSerializer
+from status.models import Status
 from .permissions import AnonymousPermission
 
 jwt_payload_handler = settings.JWT_AUTH['JWT_PAYLOAD_HANDLER']
@@ -19,6 +21,18 @@ class UserDetailAPIView(generics.RetrieveAPIView):
     queryset = User.objects.filter(is_active=True)
     lookup_field = 'username'
 
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+class UserStatusAPIView(generics.ListAPIView):
+    serializer_class = StatusInlineUserSerializer
+    
+    def get_queryset(self):
+        username = self.kwargs.get("username", None)
+        if username is None:
+            return Status.objects.none()
+        return Status.objects.filter(user__username=username)
+    
 # Custom authentication view
 class AuthView(APIView):
     permission_classes = [AnonymousPermission]
