@@ -133,4 +133,4 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-from REST_Framework.restconf import *
+from REST_Framework.restconf.main import JWT_AUTH

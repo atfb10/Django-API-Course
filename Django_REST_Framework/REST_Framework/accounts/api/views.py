@@ -2,12 +2,15 @@ from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework.views  import APIView
 from rest_framework.response import Response
-from rest_framework import permissions
+from rest_framework import generics, permissions
+
+from .serializers import UserRegisterSerializer
 
 jwt_payload_handler = settings.JWT_AUTH['JWT_PAYLOAD_HANDLER']
 jwt_encode_handler = settings.JWT_AUTH['JWT_ENCODE_HANDLER']
 jwt_repsonse_payload_handler = settings.JWT_AUTH['JWT_RESPONSE_PAYLOAD_HANDLER']
 
+User = get_user_model()
 
 # Custom authentication view
 class AuthView(APIView):
@@ -23,3 +26,9 @@ class AuthView(APIView):
         token = jwt_encode_handler(payload)
         response = jwt_repsonse_payload_handler(token, user, request)
         return Response(response)
+    
+# Register user view
+class RegisterAPIView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRegisterSerializer
+    permission_classes = [permissions.AllowAny]
