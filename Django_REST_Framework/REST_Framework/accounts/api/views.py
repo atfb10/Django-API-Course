@@ -9,6 +9,7 @@ from ..api.user.serlializers import UserDetailSerializer
 from status.api.serializers import StatusInlineUserSerializer
 from status.models import Status
 from .permissions import AnonymousPermission
+from REST_Framework.restconf.pagination import AFOREAPIPagination
 
 jwt_payload_handler = settings.JWT_AUTH['JWT_PAYLOAD_HANDLER']
 jwt_encode_handler = settings.JWT_AUTH['JWT_ENCODE_HANDLER']
@@ -26,7 +27,7 @@ class UserDetailAPIView(generics.RetrieveAPIView):
 
 class UserStatusAPIView(generics.ListAPIView):
     serializer_class = StatusInlineUserSerializer
-    
+    pagination_class = AFOREAPIPagination
     def get_queryset(self):
         username = self.kwargs.get("username", None)
         if username is None:
