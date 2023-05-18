@@ -17,14 +17,15 @@ User = get_user_model()
 class UserDetailSerializer(serializers.ModelSerializer):
     uri = serializers.SerializerMethodField(read_only=True)
     status = serializers.SerializerMethodField(read_only=True)
-
+    # statuses = serializers.HyperlinkedRelatedField(many=True, read_only=True, lookup_field='id', view_name='api-status:detail')
     class Meta:
         model = User
         fields = [
             'id',
             'username',
             'uri',
-            'status'
+            'status',
+            # 'statuses'
         ]
     
     def get_uri(self, obj):
