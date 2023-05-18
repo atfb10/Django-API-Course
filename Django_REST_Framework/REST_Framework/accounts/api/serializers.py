@@ -14,11 +14,20 @@ jwt_encode_handler = settings.JWT_AUTH['JWT_ENCODE_HANDLER']
 jwt_repsonse_payload_handler = settings.JWT_AUTH['JWT_RESPONSE_PAYLOAD_HANDLER']
 User = get_user_model()
 
+class UserPublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username'
+        ]
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
     password2 = serializers.CharField(write_only=True, style={'input_type': 'password'})
     token = serializers.SerializerMethodField(read_only=True)
     expires = serializers.SerializerMethodField(read_only=True)
+    message = serializers.SerializerMethodField(read_only=True)
     class Meta:
         fields = [
             'username',
@@ -26,9 +35,13 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             'password',
             'password',
             'token',
-            'expires'
+            'expires',
+            'message'
         ]
         extra_kwargs = {'password': {'write_only': True}}
+
+    def get_message(self,obj):
+        return "thank you for registering. please verify email"
 
     def get_expires(self, obj):
         return timezone.now() + expire_delta - datetime.timedelta(seconds=200)
@@ -37,7 +50,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user = obj
         payload = jwt_payload_handler(user)
         token = jwt_encode_handler(payload)
-        return token
+        context = self.context
+        response = jwt_repsonse_payload_handler(token, user, request=context['request'])
+        return response
 
     def validate_email(self, value):
         qs = User.objects.filter(email__iexact=value)
@@ -61,5 +76,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user_obj = User(username=validated_data.get('username'), email=validated_data.get('email'))
         user_obj.set_password(validated_data.get('password'))
+        user_obj.is_active = False
         user_obj.save()
         return user_obj

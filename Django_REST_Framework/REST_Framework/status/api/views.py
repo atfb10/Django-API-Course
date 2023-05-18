@@ -1,6 +1,6 @@
 '''
 Adam Forestier
-April 26, 2023
+May 17, 2023
 '''
 from django.shortcuts import get_object_or_404
 import json
@@ -9,6 +9,7 @@ from rest_framework import (generics, mixins, permissions) # Generics are unbeli
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from accounts.api.permissions import IsOwnerOrReadOnly
 from .serializers import StatusSerializer
 from status.models import Status
 
@@ -116,7 +117,7 @@ class StatusAPIView(generics.ListAPIView, mixins.CreateModelMixin):
 # One to rule detail, delete, update
 class StatusDetailAPIView(generics.RetrieveAPIView, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     # Detail
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     authentication_classes = [SessionAuthentication]
     queryset = Status.objects.all()
     serializer_class = StatusSerializer

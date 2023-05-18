@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from status.models import Status
+from accounts.api.serializers import UserPublicSerializer
 
 # NOTE: THIS IS JUST AN EXAMPLE OF CREATING A CUSTOM SERIALIZER that is not using a model. 
 class CustomerSerializer(serializers.Serializer):
@@ -10,6 +11,7 @@ class StatusSerializer(serializers.ModelSerializer):
     '''
     turn data into JSON and validate data
     '''
+    user = UserPublicSerializer(read_only=True)
     class Meta:
         model = Status
         fields = [
