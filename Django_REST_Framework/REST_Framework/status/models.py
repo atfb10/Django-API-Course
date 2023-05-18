@@ -38,3 +38,10 @@ class Status(models.Model):
     class Meta:
         verbose_name = 'Status Post'
         verbose_name_plural = 'Status Posts'
+
+    @property
+    def owner(self):
+        '''
+        make sure each instance of Status has owner has property for permissions purposes
+        '''
+        return self.user
