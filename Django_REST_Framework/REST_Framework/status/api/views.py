@@ -160,7 +160,6 @@ class UltimateStatusAPIView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
 
-
 '''
 one endpoint to do all. NOTE: Not best in practice. Gets overally complex. Do 2, 1 detail (update, detail, delete), 1 list (list, create)
 '''

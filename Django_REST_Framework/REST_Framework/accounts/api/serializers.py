@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework import generics, permissions
 import datetime
-
+from rest_framework.reverse import reverse as api_reverse
 from django.utils import timezone
 
 expire_delta = settings.JWT_AUTH['JWT_REFRESH_EXPIRATION_DELTA']
@@ -24,7 +24,7 @@ class UserPublicSerializer(serializers.ModelSerializer):
         ]
     
     def get_uri(self, obj):
-        return f'/api/users/{obj.id}'
+        return api_reverse('api-status:detail', kwargs={"id": obj.id}, request=self.context.get('request'))
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})

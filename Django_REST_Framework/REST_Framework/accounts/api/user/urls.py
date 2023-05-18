@@ -3,7 +3,7 @@ from django.urls import path, re_path
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 from ..views import UserDetailAPIView, UserStatusAPIView
 
-app_name = 'api'
+app_name = 'accounts'
 
 urlpatterns = [
     re_path(r'^(?P<username>\w+)/$', UserDetailAPIView.as_view(), name='detail'),
