@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import generics, permissions
 
 from .serializers import UserRegisterSerializer
+from ..api.user.serlializers import UserDetailSerializer
 from .permissions import AnonymousPermission
 
 jwt_payload_handler = settings.JWT_AUTH['JWT_PAYLOAD_HANDLER']
@@ -12,6 +13,11 @@ jwt_encode_handler = settings.JWT_AUTH['JWT_ENCODE_HANDLER']
 jwt_repsonse_payload_handler = settings.JWT_AUTH['JWT_RESPONSE_PAYLOAD_HANDLER']
 
 User = get_user_model()
+
+class UserDetailAPIView(generics.RetrieveAPIView):
+    serializer_class = UserDetailSerializer
+    queryset = User.objects.filter(is_active=True)
+    lookup_field = 'username'
 
 # Custom authentication view
 class AuthView(APIView):
