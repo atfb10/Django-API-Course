@@ -3,6 +3,8 @@ from django.urls import path
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 from .views import AuthView, RegisterAPIView
 
+app_name = 'accounts'
+
 urlpatterns = [
     path('', AuthView.as_view()),
     path('jwt', obtain_jwt_token),

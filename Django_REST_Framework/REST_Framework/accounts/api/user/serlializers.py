@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import generics, permissions
 import datetime
 from django.utils import timezone
-
+from rest_framework.reverse import reverse as api_reverse
 from status.api.serializers import StatusInlineUserSerializer
 
 expire_delta = settings.JWT_AUTH['JWT_REFRESH_EXPIRATION_DELTA']
@@ -17,19 +17,20 @@ User = get_user_model()
 class UserDetailSerializer(serializers.ModelSerializer):
     uri = serializers.SerializerMethodField(read_only=True)
     status = serializers.SerializerMethodField(read_only=True)
-
+    # statuses = serializers.HyperlinkedRelatedField(many=True, read_only=True, lookup_field='id', view_name='api-status:detail')
     class Meta:
         model = User
         fields = [
             'id',
             'username',
             'uri',
-            'status'
+            'status',
+            # 'statuses'
         ]
     
-    
     def get_uri(self, obj):
-        return f'/api/users/{obj.id}'
+        request = self.context.get('request')
+        return api_reverse("api-user:detail", kwargs={"username": obj.username}, request=request)
     
     def get_status(self, obj):
         request = self.context.get('request')
@@ -43,7 +44,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         qs = obj.status_set.all().order_by("-timestamp")
         data = {
             'uri': self.get_uri(obj=obj) + "status/",
-            'last': StatusInlineUserSerializer(qs.first()).data,
-            'recent': StatusInlineUserSerializer(qs[:limit], many=True).data
+            'last': StatusInlineUserSerializer(qs.first(), context={'request': request}).data,
+            'recent': StatusInlineUserSerializer(qs[:limit], many=True, context={'request': request}).data
         }
         return data

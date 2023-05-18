@@ -8,7 +8,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework import (generics, mixins, permissions) # Generics are unbelievably good
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from rest_framework.filters import SearchFilter, OrderingFilter
 from accounts.api.permissions import IsOwnerOrReadOnly
 from .serializers import StatusSerializer
 from status.models import Status
@@ -94,17 +94,23 @@ class StatusAPIView(generics.ListAPIView, mixins.CreateModelMixin):
     # authentication_classes = [SessionAuthentication] # NOTE: Commented out to show that the default auth & permissions are working due to what is in main.py and important * from main.py in settings.py!
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
+    passed_id = None
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ('user__username', 'content')
+    ordering_fields = ('user__username', 'timestamp')
+    queryset = Status.objects.all()
 
-    def get_queryset(self):
-        '''
-        overwrite the default queryset to be able to search by content!
-        NOTE: search by /api/status/?q=<text to search>
-        '''
-        qs = Status.objects.all()
-        q = self.request.GET.get('q')
-        if q is not None:
-            qs = qs.filter(content__icontains=q)
-        return qs
+    # NOTE: get_queryset has been improved through search fields and filter backends
+    # def get_queryset(self):
+    #     '''
+    #     overwrite the default queryset to be able to search by content!
+    #     NOTE: search by /api/status/?q=<text to search>
+    #     '''
+    #     qs = Status.objects.all()
+    #     q = self.request.GET.get('q')
+    #     if q is not None:
+    #         qs = qs.filter(content__icontains=q)
+    #     return qs
     
     # Create
     def post(self, request, *args, **kwargs):
@@ -139,17 +145,20 @@ class UltimateStatusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     authentication_class = [SessionAuthentication]
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
+    
 
 class UltimateStatusAPIView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_class = [SessionAuthentication]
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ('user__username', 'content')
+    ordering_fields = ('user__username', 'timestamp')
 
     # Create
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
-
 
 '''
 one endpoint to do all. NOTE: Not best in practice. Gets overally complex. Do 2, 1 detail (update, detail, delete), 1 list (list, create)

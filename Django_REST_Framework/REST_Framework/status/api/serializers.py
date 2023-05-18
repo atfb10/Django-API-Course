@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from status.models import Status
 from accounts.api.serializers import UserPublicSerializer
-
+from rest_framework.reverse import reverse as api_reverse
 # NOTE: THIS IS JUST AN EXAMPLE OF CREATING A CUSTOM SERIALIZER that is not using a model. 
 class CustomerSerializer(serializers.Serializer):
     content = serializers.CharField()
@@ -23,12 +23,13 @@ class StatusInlineUserSerializer(serializers.ModelSerializer):
         ]
 
     def get_uri(self, obj):
-        return f'/api/users/{obj.id}'
+        return api_reverse('api-status:detail', kwargs={"id": obj.id}, request=self.context.get('request'))
 class StatusSerializer(serializers.ModelSerializer):
     '''
     turn data into JSON and validate data
     '''
-    user = UserPublicSerializer(read_only=True)
+    # user = UserPublicSerializer(read_only=True)
+    user = serializers.SerializerMethodField(read_only=True)
     uri = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Status
@@ -42,8 +43,9 @@ class StatusSerializer(serializers.ModelSerializer):
         read_only_fields = [
             'user'
         ]
+
     def get_uri(self, obj):
-        return f'/api/users/{obj.id}'
+        return api_reverse('api-status:detail', kwargs={"id": obj.id}, request=self.context.get('request'))
     '''
     field level validation
     NOTE: just need to name validate_<fieldname>
