@@ -12,9 +12,11 @@ class StatusSerializer(serializers.ModelSerializer):
     turn data into JSON and validate data
     '''
     user = UserPublicSerializer(read_only=True)
+    uri = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Status
         fields = [
+            'uri',
             'id',
             'user',
             'content',
@@ -23,6 +25,8 @@ class StatusSerializer(serializers.ModelSerializer):
         read_only_fields = [
             'user'
         ]
+    def get_uri(self, obj):
+        return f'/api/users/{obj.id}'
     '''
     field level validation
     NOTE: just need to name validate_<fieldname>

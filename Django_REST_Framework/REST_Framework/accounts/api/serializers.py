@@ -6,7 +6,6 @@ from rest_framework import generics, permissions
 import datetime
 
 from django.utils import timezone
-from .serializers import UserRegisterSerializer
 
 expire_delta = settings.JWT_AUTH['JWT_REFRESH_EXPIRATION_DELTA']
 jwt_payload_handler = settings.JWT_AUTH['JWT_PAYLOAD_HANDLER']
@@ -15,12 +14,17 @@ jwt_repsonse_payload_handler = settings.JWT_AUTH['JWT_RESPONSE_PAYLOAD_HANDLER']
 User = get_user_model()
 
 class UserPublicSerializer(serializers.ModelSerializer):
+    uri = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = User
         fields = [
             'id',
-            'username'
+            'username',
+            'uri'
         ]
+    
+    def get_uri(self, obj):
+        return f'/api/users/{obj.id}'
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
